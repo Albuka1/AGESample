@@ -81,11 +81,11 @@ internal sealed class UiInteractionSystem : ISystem
         }
         else if (entity.Id == _ui.ZoomInButton.Id)
         {
-            Zoom(1.25f);
+            Zoom(0.8f);
         }
         else if (entity.Id == _ui.ZoomOutButton.Id)
         {
-            Zoom(0.8f);
+            Zoom(1.25f);
         }
     }
 

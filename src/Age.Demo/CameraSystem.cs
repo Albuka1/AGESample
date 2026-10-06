@@ -51,17 +51,17 @@ internal sealed class CameraSystem : ISystem
         if (pan != Vector2.Zero)
         {
             _state.FollowPlayer = false;
-            camera.Position += pan * (DemoConfig.CameraPanSpeed * delta / camera.Zoom);
+            camera.Position += pan * (DemoConfig.CameraPanSpeed * delta);
         }
 
         if (_input.IsKeyDown(Key.Q))
         {
-            camera.Zoom *= MathF.Exp(-DemoConfig.CameraZoomSpeed * delta);
+            camera.Zoom *= MathF.Exp(DemoConfig.CameraZoomSpeed * delta);
         }
 
         if (_input.IsKeyDown(Key.E))
         {
-            camera.Zoom *= MathF.Exp(DemoConfig.CameraZoomSpeed * delta);
+            camera.Zoom *= MathF.Exp(-DemoConfig.CameraZoomSpeed * delta);
         }
 
         camera.Zoom = Math.Clamp(camera.Zoom, DemoConfig.MinZoom, DemoConfig.MaxZoom);
@@ -76,8 +76,8 @@ internal sealed class CameraSystem : ISystem
             TransformComponent transform = world.Get<TransformComponent>(_scene.Player);
             Vector2 size = world.Get<SpriteComponent>(_scene.Player).Size * transform.Scale;
             Vector2 center = transform.Position + (size * 0.5f);
-            Vector2 extent = new(camera.ViewportSize.X / camera.Zoom, camera.ViewportSize.Y / camera.Zoom);
-            Vector2 target = center - (extent * 0.5f);
+            var half = new Vector2(camera.ViewportSize.X * 0.5f, camera.ViewportSize.Y * 0.5f);
+            Vector2 target = (center * (1f / camera.Zoom)) - half;
 
             camera.Position += (target - camera.Position) * Math.Clamp(delta * DemoConfig.FollowLerp, 0f, 1f);
         }

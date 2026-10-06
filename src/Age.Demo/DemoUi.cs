@@ -41,8 +41,8 @@ internal sealed class DemoUi
 
         PauseButton = CreateButton(world, 24f, "PAUSE", 2);
         ResetButton = CreateButton(world, 142f, "RESET", 3);
-        ZoomInButton = CreateButton(world, 260f, "ZOOM +", 4);
-        ZoomOutButton = CreateButton(world, 378f, "ZOOM -", 5);
+        ZoomInButton = CreateButton(world, 260f, "ZOOM IN", 4);
+        ZoomOutButton = CreateButton(world, 378f, "ZOOM OUT", 5);
     }
 
     private static Entity CreatePanel(World world)
