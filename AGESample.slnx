@@ -1,2 +1,12 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="engine/src/Age.Assets/Age.Assets.csproj" />
+    <Project Path="engine/src/Age.Audio/Age.Audio.csproj" />
+    <Project Path="engine/src/Age.Core/Age.Core.csproj" />
+    <Project Path="engine/src/Age.Input/Age.Input.csproj" />
+    <Project Path="engine/src/Age.Physics/Age.Physics.csproj" />
+    <Project Path="engine/src/Age.Rendering/Age.Rendering.csproj" />
+    <Project Path="engine/src/Age.UI/Age.UI.csproj" />
+    <Project Path="src/Age.Demo/Age.Demo.csproj" />
+  </Folder>
 </Solution>
