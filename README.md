@@ -1,6 +1,7 @@
 # AGESample
 
-An interactive demo for the [Auae Game Engine (AGE)](https://github.com/Albuka1/AGE).
+An interactive demo for the [Auae Game Engine (AGE)](https://github.com/Albuka1/AGE),
+pinned to the engine release **v0.2.0**.
 The engine is consumed as a **git submodule** and built from source through
 project references, so the demo always runs against the exact engine revision
 pinned in this repository.
@@ -16,7 +17,8 @@ pinned in this repository.
 | Camera | Two-dimensional camera with panning, zooming and smooth follow |
 | Input | `WindowInputService` implements the engine `IInputService` over Silk.NET input and replaces the engine default through dependency injection |
 | UI | Retained buttons and labels with hover and press feedback driven by the engine `UIUpdateSystem` |
-| Game loop | `SilkGameLoop` owns the frame loop and feeds `GameTime` into the pipeline |
+| Game loop | `SilkGameLoop` owns the frame loop, the input frame and the fixed steps, and it draws once per frame after them |
+| Branding | The engine splash shows the AGE logo while the first frames run |
 
 ## Controls
 
@@ -60,9 +62,13 @@ inside the submodule, so the demo never changes how the engine builds.
 
 ## Notes and limitations
 
-- AGE has no texture loader yet, so every sprite is a solid-color quad and text
-  uses the built-in bitmap font. `StbImageSharp`, `StbTrueTypeSharp` and a real
-  `SilkInputService` are on the engine roadmap.
+- The engine gained a lot since `v0.1.0`, and this demo does not use all of it yet. It
+  still draws solid-color quads because it ships no image, and its text still uses the
+  built-in bitmap font because it ships no font file. The engine can do both now:
+  `ITextureService` loads and caches PNG, JPEG, BMP, TGA and GIF, `IFontService` bakes a
+  TrueType font into a glyph atlas, and `Age.Sample` in the engine repository shows
+  both. The engine also ships a `SilkInputService` now, which the demo replaces with its
+  own `WindowInputService` on purpose, to show that the container decides.
 - The engine `UIRenderSystem` draws `ButtonComponent.BaseColor` as-is, so the
   demo applies hover and press colours itself inside `UiInteractionSystem`.
 - A GPU with OpenGL 3.3 core profile support is required.

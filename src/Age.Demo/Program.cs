@@ -75,13 +75,30 @@ pipeline.Add(provider.GetRequiredService<HudSystem>());
 
 RenderSystem renderSystem = provider.GetRequiredService<RenderSystem>();
 UIRenderSystem uiRenderSystem = provider.GetRequiredService<UIRenderSystem>();
+RenderPipeline renderPipeline = provider.GetRequiredService<RenderPipeline>();
+renderPipeline.Add(renderSystem);
+renderPipeline.Add(uiRenderSystem);
+SplashScreen splash = provider.GetRequiredService<SplashScreen>();
 
-provider.GetRequiredService<IGameLoop>().Run(time =>
-{
-    input.BeginFrame();
-    world.Update(time, pipeline);
-    renderSystem.Render(world, state.Camera);
-    uiRenderSystem.Render(world);
-});
+// The loop opens the input frame of every registered input service and then advances the simulation in fixed steps, so
+// the demo no longer has to call BeginFrame itself and no longer moves by the time a frame happened to take.
+provider.GetRequiredService<IGameLoop>().Run(
+    update: step => world.Update(step, pipeline),
+    render: time =>
+    {
+        if (splash.Draw(renderer, time, input))
+        {
+            return;
+        }
 
+        // The camera takes the size of the frame before the passes run, so its culling agrees with the projection of the
+        // renderer, including after the window was resized.
+        state.Camera.ViewportSize = renderer.ViewportSize;
+        renderPipeline.Render(world, state.Camera);
+    });
+
+// The renderer owns device objects that live in the OpenGL context of the window, so it is disposed while the window is
+// still open; the container then disposes the services, and every call of theirs is a no-op by then.
+splash.Dispose();
+renderer.Dispose();
 windowService.Close();

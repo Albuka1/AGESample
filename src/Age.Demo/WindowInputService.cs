@@ -81,7 +81,8 @@ internal sealed class WindowInputService : IInputService
 
     public bool IsMouseButtonPressed(MouseButton button) => button == MouseButton.Left && _mousePressed;
 
-    internal void BeginFrame()
+    /// <inheritdoc />
+    public void BeginFrame()
     {
         _previous.Clear();
 
