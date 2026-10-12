@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/AGE/">
+    <Project Path="AGE/Age.Assets/Age.Assets.csproj" />
+    <Project Path="AGE/Age.Audio/Age.Audio.csproj" />
+    <Project Path="AGE/Age.Content/Age.Content.csproj" />
+    <Project Path="AGE/Age.Core/Age.Core.csproj" />
+    <Project Path="AGE/Age.Input/Age.Input.csproj" />
+    <Project Path="AGE/Age.Physics/Age.Physics.csproj" />
+    <Project Path="AGE/Age.Rendering/Age.Rendering.csproj" />
+    <Project Path="AGE/Age.UI/Age.UI.csproj" />
+  </Folder>
+  <Folder Name="/Game/">
+    <Project Path="Game/Age.Platformer.csproj" />
+    <Project Path="Game.Tests/Age.Platformer.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -4,10 +4,18 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
+  <!-- A game that uses the engine needs the package below and nothing else: what the engine itself uses is a dependency of the
+       engine's own projects, and the version of each of those is pinned in the Directory.Packages.props of the AGE clone rather
+       than here. What a new game adds is its own dependencies, and this list is where they go. -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
-    <PackageVersion Include="Silk.NET.Input" Version="2.23.0" />
-    <PackageVersion Include="Silk.NET.Windowing" Version="2.23.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.12" />
+  </ItemGroup>
+
+  <!-- What the tests of the game use. -->
+  <ItemGroup>
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

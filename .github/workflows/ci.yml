@@ -11,12 +11,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      # The engine is a submodule, so a runner that does not take it has no projects to build against.
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.100
-      - run: dotnet restore AGESample.slnx
-      - run: dotnet build AGESample.slnx --no-restore -c Release
-      - run: dotnet format AGESample.slnx --verify-no-changes
+      - run: dotnet restore Age.Platformer.slnx
+      - run: dotnet build Age.Platformer.slnx --no-restore -c Release
+      # The tests of the game read its own types and its own content, and a game whose tests do not run is a game whose
+      # systems are checked by a person rather than by a build.
+      - run: dotnet test Game.Tests/Age.Platformer.Tests.csproj --no-build -c Release
+      - run: dotnet format Age.Platformer.slnx --verify-no-changes --no-restore

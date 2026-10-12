@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Age.Platformer.Tests</RootNamespace>
+    <!-- The tests run on the platform runner of xunit, which is what the engine's own tests use, so one command runs every
+         test of the game the same way it runs every test of the engine. -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The tests read the content of the game, so the folder lands next to the test executable exactly as it lands next to the
+         game. A test that reads a document is then a test of what a person ships rather than of a copy of it. -->
+    <None Include="Resources\**" Link="Resources\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Game\Age.Platformer.csproj" />
+  </ItemGroup>
+
+</Project>

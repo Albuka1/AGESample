@@ -9,9 +9,32 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <Authors>Albuka1</Authors>
     <Company>Albuka1</Company>
-    <Product>Auae Game Engine Sample</Product>
+    <Product>AGE Platformer</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Albuka1/AGESample</RepositoryUrl>
+
+    <!-- What the game says it was written for. The engine refuses to start a game of another contract, so this is bumped when the
+         engine's own engine.version.json is bumped, and game.version.json beside the executable says the same thing. -->
+    <Version>0.4.0</Version>
+
+    <!-- A key and a button are the names of the device that the window reports through, which is Silk.NET for this engine, so the
+         two names are imported into every assembly as `Key` and `MouseButton`. A project that means something else by one of those
+         names turns them off and writes the device's name in full. -->
+    <AgeSilkInputAliases>true</AgeSilkInputAliases>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(AgeSilkInputAliases)' == 'true'">
+    <Using Include="Silk.NET.Input.Key" Alias="Key" />
+    <Using Include="Silk.NET.Input.MouseButton" Alias="MouseButton" />
+  </ItemGroup>
+
+  <!-- Every build writes into one bin/ and one obj/ at the root rather than into a pair beside each project, which is what the
+       engine does as well: a person finds the output of the whole solution in one place, and a folder per project inside it keeps
+       two projects that share the name of an assembly from writing over one another. -->
+  <PropertyGroup>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
   </PropertyGroup>
 
 </Project>

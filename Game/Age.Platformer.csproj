@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- On Windows the game is built as a window rather than a console application, so the operating system opens the game
+         window and not the console window that a console application brings with it. A `dotnet run` from a terminal still
+         attaches a console, which is where the lines of the engine go while a person develops. -->
+    <OutputType Condition="$([MSBuild]::IsOSPlatform('Windows'))">WinExe</OutputType>
+    <RootNamespace>Age.Platformer</RootNamespace>
+    <AssemblyName>Age.Platformer</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- What this game was written for: the version of the engine it declares, which the engine compares with its own before the
+         game starts. The file lands beside the executable, which is where the engine reads it. -->
+    <None Include="game.version.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The content of the game: every document, image, shader and sound it reads at run time lands next to the executable,
+         which makes that folder the asset root. Nothing here is read at compile time. The folder lives in the repository root
+         beside the Game folder rather than inside it, so the path climbs out of Game and back down into Resources, and Link
+         puts every file under Resources/ next to the executable, which is where the loader expects it. -->
+    <Content Include="..\Resources\**" Link="Resources\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The tests of the game read the types of the game, and every one of them is internal because nothing outside the game
+         uses them: this is what keeps them internal rather than making them public for a test. -->
+    <InternalsVisibleTo Include="Age.Platformer.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The assemblies of the engine, which are the folders at the root of the AGE clone beside this one. -->
+    <ProjectReference Include="..\AGE\Age.Core\Age.Core.csproj" />
+    <ProjectReference Include="..\AGE\Age.Assets\Age.Assets.csproj" />
+    <ProjectReference Include="..\AGE\Age.Content\Age.Content.csproj" />
+    <ProjectReference Include="..\AGE\Age.Input\Age.Input.csproj" />
+    <ProjectReference Include="..\AGE\Age.Audio\Age.Audio.csproj" />
+    <ProjectReference Include="..\AGE\Age.Physics\Age.Physics.csproj" />
+    <ProjectReference Include="..\AGE\Age.UI\Age.UI.csproj" />
+    <ProjectReference Include="..\AGE\Age.Rendering\Age.Rendering.csproj" />
+  </ItemGroup>
+
+</Project>
