@@ -142,7 +142,12 @@ VignettePass vignettePass = null!;
 void SubscribeEvents(World subscribed)
 {
     subscribed.Events.Subscribe<CollisionEvent>((_, collision) => DemoActions.TintByCollision(subscribed, collision.First, collision.Second));
-    subscribed.Events.Subscribe<ButtonPressedEvent>((_, _) => sounds.Play(click));
+
+    // A click of a button is heard through the UI channel of the mixer, which is what the audio of 0.5.0 added: a sound is no
+    // longer just a number and a loop flag, it is a value that says how it is heard, and a channel is one of the six values of it.
+    subscribed.Events.Subscribe<ButtonPressedEvent>((_, _) =>
+        sounds.Play(click, AudioPlaybackSettings.Default(AudioChannel.Ui)));
+
     subscribed.Events.Subscribe<TimerElapsedEvent>((_, timer) => subscribed.RequestDestroy(timer.Entity));
 
     // The entity of an event is the one the event carries, because the world raises these without naming one to the handler. A tween
@@ -654,4 +659,3 @@ provider.GetRequiredService<GameShutdown>().Run();
 // The game ran, so the process exits well: the only other exit is the one above, where a demo of another contract of the engine is refused
 // before anything of it is built.
 return 0;
-

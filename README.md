@@ -4,7 +4,7 @@ A demonstration of what the [Auae Game Engine (AGE)](https://github.com/Albuka1/
 repository exists to be: clone it, rename the game, and the engine, the content, the console, the tests and the CI are already
 wired together.
 
-The engine is a **git submodule** in `AGE/`, pinned to **v0.4.0**, and it is built from source through project references, so the
+The engine is a **git submodule** in `AGE/`, pinned to **v0.5.0**, and it is built from source through project references, so the
 demo always runs against the exact revision this repository names rather than against a package that moved.
 
 ## Getting started
