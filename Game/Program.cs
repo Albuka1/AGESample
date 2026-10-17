@@ -16,8 +16,8 @@ using Microsoft.Extensions.Logging;
 
 // What this demo was written for is what decides whether it runs at all: the version of the engine that the game declares in
 // `game.version.json` beside its executable is compared with the one that is running it, and a game of another contract is refused
-// here, before a window is opened or a service is built. Before 1.0 the minor number carries a change a game has to follow, so 0.4
-// and 0.5 are not the same contract; a game of the same contract that names another build runs with a line, which is the usual case
+// here, before a window is opened or a service is built. Before 1.0 the minor number carries a change a game has to follow, so 0.5
+// and 0.6 are not the same contract; a game of the same contract that names another build runs with a line, which is the usual case
 // of a build that moved forward.
 GameVersion? declared = VersionCheck.ReadExecutable();
 
@@ -50,7 +50,9 @@ services.AddLogging(builder =>
 });
 
 // The services of the engine, one call per assembly. This demo uses all of them, because being a demonstration of what the engine can
-// do is the whole of what it is for: a game of your own registers what it uses and leaves the rest out.
+// do is the whole of what it is for: a game of your own registers what it uses and leaves the rest out. `AddAgeCore`, `AddAgeRendering`,
+// `AddAgePhysics` and `AddAgeUI` read their own assemblies, so their systems and their component registrations are found without one
+// line of them being named here.
 services.AddAgeCore();
 services.AddAgeContent();
 services.AddAgeAssets();
@@ -61,6 +63,12 @@ services.AddAgePhysics();
 services.AddAgeUI();
 services.AddAgeRendering();
 services.AddAgeSilkInput();
+
+// The systems and the component registrations of this demo, read from the assembly of the game the way the engine reads its own: a
+// class that carries [System] or answers a [SystemInterface] is what the container registers, so a new system of a game is a class
+// that is compiled rather than a line of its Program.cs.
+services.AddAgeSystems(typeof(Program).Assembly);
+services.AddAgeComponentRegistrations(typeof(Program).Assembly);
 
 // This demo says what it is called, so its settings and its saves live in a folder of their own under the roaming application data of
 // the account. `AddAgeCore` registers a name taken from the entry assembly and the last registration is the one that answers.
@@ -74,8 +82,17 @@ var world = new World();
 // The systems of the engine that own the time of the game. A timer counts down and announces its end; a tween computes a value and
 // announces it; the animation of a sprite sheet plays on the same fixed steps, so a goblin spawned from content walks because its
 // prototype names a state of its sheet rather than because this demo counts frames.
+//
+// The collision system reads the layer of a collider against the mask of another one to decide what answers what, and it resolves a
+// solid pair by default: a body that stands in another one is moved out of it, which is what a game of a walkable world asks for.
+// This demo reads the pairs of a step to tint the sprites of what touches what rather than to place its own bodies, so it turns the
+// resolution off, which is what a system of detection alone is.
 SystemPipeline pipeline = provider.GetRequiredService<SystemPipeline>();
-pipeline.Add(provider.GetRequiredService<CollisionSystem>());
+
+CollisionSystem collision = provider.GetRequiredService<CollisionSystem>();
+collision.Resolve = false;
+pipeline.Add(collision);
+
 pipeline.Add(provider.GetRequiredService<TimerSystem>());
 pipeline.Add(provider.GetRequiredService<TweenSystem>());
 pipeline.Add(provider.GetRequiredService<SpriteAnimationSystem>());
@@ -233,7 +250,8 @@ loading.Add(LoadSettings);
 // The content of a game is data: a document under Resources/Prototypes declares a prototype by its identifier, names the components it
 // carries with the values they start with, and inherits the rest from a parent. The manager reads every file first and then resolves
 // them, so a mistake in a document is a message here rather than a surprise in a fight. A document whose type is `entity` is read as
-// an entity, which is what a spawn makes out of it.
+// an entity, which is what a spawn makes out of it, and one whose type is `material` is read as the stage of a shader with the values
+// its uniforms start with.
 loading.Add(() =>
 {
     prototypes.Register(EntityPrototype.Kind, EntityPrototype.Read);
@@ -267,17 +285,21 @@ loading.Add(() => click = sounds.Load(DemoConfig.ClickPath));
 // The entities of this demo. The two that are moved by hand are built here so that the demo has something on screen even if the
 // content of the game is missing; the goblin and the beacon are built from the documents under Resources/Prototypes, which is what
 // shows that a prototype is the way a game declares an entity rather than a way it saves one.
+//
+// What builds a collider is `ColliderComponent.Of`, which answers the layer it belongs to: two colliders of the same layer are what
+// touches what, and the layer of a collider is what a shot and a wall are told apart by. A collider that a document writes is built
+// the same way, so a pair of a prototype and an entity of this demo is a pair the collision system reads.
 loading.Add(() =>
 {
     hero = world.CreateEntity();
     world.Set(hero, new TransformComponent { Position = new Vector2(400f, 300f), Scale = new Vector2(1f, 1f) });
     world.Set(hero, new SpriteComponent { TexturePath = DemoConfig.TilePath, Size = new Vector2(64f, 64f), Color = Color.White, ZOrder = 0 });
-    world.Set(hero, new ColliderComponent { Size = new Vector2(64f, 64f) });
+    world.Set(hero, ColliderComponent.Of(new Vector2(64f, 64f), CollisionLayer.Default));
 
     companion = world.CreateEntity();
     world.Set(companion, new TransformComponent { Position = new Vector2(520f, 380f), Scale = new Vector2(1f, 1f) });
     world.Set(companion, new SpriteComponent { TexturePath = DemoConfig.TilePath, Size = new Vector2(48f, 48f), Color = Color.Green, ZOrder = 1 });
-    world.Set(companion, new ColliderComponent { Size = new Vector2(48f, 48f) });
+    world.Set(companion, ColliderComponent.Of(new Vector2(48f, 48f), CollisionLayer.Default));
 
     // A tween turns the companion on the spot, which is what a value of an entity that nothing else reads a step for looks like: the
     // tween computes it and announces it, and the subscription above writes it where Transform holds it.

@@ -15,7 +15,7 @@
 
     <!-- What the game says it was written for. The engine refuses to start a game of another contract, so this is bumped when the
          engine's own engine.version.json is bumped, and game.version.json beside the executable says the same thing. -->
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
 
     <!-- A key and a button are the names of the device that the window reports through, which is Silk.NET for this engine, so the
          two names are imported into every assembly as `Key` and `MouseButton`. A project that means something else by one of those

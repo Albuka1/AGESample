@@ -108,7 +108,9 @@ internal static class DemoActions
     /// <remarks>
     /// The lifetime is a timer of the engine rather than a counter of this game: the timer system advances every timer of a world, and
     /// the subscription of the demo destroys the entity of the one that ran out. The slot is handed out again for the next entity, so
-    /// the demo keeps no book of its own.
+    /// the demo keeps no book of its own. The collider is `ColliderComponent.Of`, which answers the layer it belongs to: a collider that
+    /// a document writes is built the same way, so a pair of a spawn of this demo and an entity of a prototype is a pair the collision
+    /// system reads.
     /// </remarks>
     public static Entity SpawnFading(World world, Vector2 position, float lifetime)
     {
@@ -118,7 +120,7 @@ internal static class DemoActions
 
         world.Set(entity, new TransformComponent { Position = position, Scale = new Vector2(1f, 1f) });
         world.Set(entity, new SpriteComponent { Size = new Vector2(32f, 32f), Color = new Color(135, 206, 235), ZOrder = 2 });
-        world.Set(entity, new ColliderComponent { Size = new Vector2(32f, 32f) });
+        world.Set(entity, ColliderComponent.Of(new Vector2(32f, 32f), CollisionLayer.Default));
         world.Set(entity, TimerComponent.For(lifetime));
 
         return entity;
@@ -206,4 +208,3 @@ internal static class DemoActions
         }
     }
 }
-
